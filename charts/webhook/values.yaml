@@ -172,7 +172,7 @@ instrumentationRules:
   - name: cav-java-agent
     matchRules:
       namespaceRegex: .*
-      podNameRegex: ^(frontend)
+      podNameRegex: .*
     injectionRules:
       template: java-default
       containerMatch:
@@ -183,7 +183,7 @@ instrumentationRules:
     matchRules:
       namespaceRegex: .*
       # - com.cavisson/inject-nodejs: "true"
-      podNameRegex: ^(paymentservice)
+      podNameRegex: ^(video|directv|dtv|sst|digital|fr)
     injectionRules:
       template: nodejs-default
       containerMatch:
