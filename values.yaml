@@ -7,7 +7,7 @@ cmon:
   enabled: true
   image:
     repository: cavissonsystem/cmon_nf_agent
-    tag: 4.16.0.68
+    tag: "4.16.0.68"
     pullPolicy: Always
 
   controller: "64.71.137.183:4472"
