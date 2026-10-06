@@ -23,20 +23,6 @@ cmon:
   serverCaCert: "your-ca-bundle.crt"
 
 
-
-cavproxy:
-  enabled: true
-  image:
-    repository: cavissonsystem/cavndproxy-alpine
-    tag: 4.16.0.B67
-    pullPolicy: Always
-
-  ndhome: "/opt/cavisson/netdiagnostics"
-  ldLibraryPath: "/usr/lib/x86_64-linux-gnu"
-  ndcHost: "64.71.137.183"
-  ndcPort: "4472"
-  ndcCommProtocol: "WSS"
-
 webhook:
   enabled: true
   image:
@@ -45,80 +31,6 @@ webhook:
     pullPolicy: Always
 
   instrumentationTemplates:
-    - name: dotnet-default-debian
-      injectionRules:
-        technology: dotnet
-        image: cavissonsystem/dotnet-agent-ubuntu:4.15.0.B123
-        TierNameSource: auto
-        env:
-          - name: NDHOME
-            value: /opt/cavisson/netdiagnostics
-          - name: CORECLR_PROFILER
-            value: "{918728DD-259F-4A6A-AC2B-B85E1B658318}"
-          - name: CORECLR_ENABLE_PROFILING
-            value: "1"
-          - name: CORECLR_PROFILER_PATH
-            value: /opt/cavisson/netdiagnostics/DotNetC/dll/ILRewriteProfiler.so
-          - name: LD_LIBRARY_PATH
-            value: /opt/cavisson/netdiagnostics/DotNetC/lib:$(LD_LIBRARY_PATH)
-          - name: DOTNET_STARTUP_HOOKS
-            value: /opt/cavisson/netdiagnostics/DotNetC/dll/ProfilerHelper.dll
-          - name: CAV_APP_AGENT_ENABLE_MONITORING
-            value: "1"
-          - name: CAV_APP_AGENT_AGENTLOGGINGMODE
-            value: "1"
-          - name: OTEL_DOTNET_AUTO_EXCLUDE_PROCESSES
-            value: ThreadDumpTool
-
-    - name: dotnet-default-alpine
-      injectionRules:
-        technology: dotnet
-        image: cavissonsystem/dotnet-agent-alpine:4.15.0.B123
-        TierNameSource: auto
-        env:
-          - name: NDHOME
-            value: /opt/cavisson/netdiagnostics
-          - name: CORECLR_PROFILER
-            value: "{918728DD-259F-4A6A-AC2B-B85E1B658318}"
-          - name: CORECLR_ENABLE_PROFILING
-            value: "1"
-          - name: CORECLR_PROFILER_PATH
-            value: /opt/cavisson/netdiagnostics/DotNetC/dll/ILRewriteProfiler.so
-          - name: LD_LIBRARY_PATH
-            value: /opt/cavisson/netdiagnostics/DotNetC/lib:$(LD_LIBRARY_PATH)
-          - name: DOTNET_STARTUP_HOOKS
-            value: /opt/cavisson/netdiagnostics/DotNetC/dll/ProfilerHelper.dll
-          - name: CAV_APP_AGENT_ENABLE_MONITORING
-            value: "1"
-          - name: CAV_APP_AGENT_AGENTLOGGINGMODE
-            value: "1"
-          - name: OTEL_DOTNET_AUTO_EXCLUDE_PROCESSES
-            value: ThreadDumpTool
-
-    - name: python-default
-      injectionRules:
-        technology: python
-        image: cavissonsystem/python-agent:4.15.0.B134
-        TierNameSource: auto
-
-    - name: java-default
-      injectionRules:
-        technology: java
-        image: cavissonsystem/java-agent:4.16.0.B67  # TODO: replace with cavissonsystem java agent image
-        javaEnvVar: JAVA_TOOL_OPTIONS
-        TierNameSource: auto
-        env:
-          - name: NDHOME
-            value: /opt/cavisson/netdiagnostics
-          - name: CAV_APP_AGENT_AGENTLOGGINGMODE
-            value: "ALL"
-          - name: CAV_APP_AGENT_NDCHOST
-            value: "64.71.137.183"
-          - name: CAV_APP_AGENT_NDCPORT
-            value: "4472"
-          - name: CAV_APP_AGENT_NDC_COMM_PROTOCOL
-            value: "WSS"
-
     - name: nodejs-default
       injectionRules:
         technology: nodejs
