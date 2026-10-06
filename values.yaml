@@ -11,9 +11,9 @@ cmon:
     pullPolicy: Always
 
   controller: "64.71.137.183:4472"
-  tier: "Boutique"
+  tier: "DirecTV-dpdui-dev"
   ndcCommProtocol: "WSS"
-  clusterName: "Boutique"
+  clusterName: "dpdui-eks-uswest2-dev"
   jvmOpts: "-Xms1000m -Xmx1500m"
   monAgentOpts: "-F 0 -m 300 -d 5"
   verifyServerCert: "0"
