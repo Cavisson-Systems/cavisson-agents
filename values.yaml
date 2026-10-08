@@ -10,7 +10,7 @@ cmon:
     tag: "4.16.0.68"
     pullPolicy: Always
 
-  controller: "64.71.137.183:4472"
+  controller: "64.71.137.183:443"
   tier: "DirecTV-dpdui-dev"
   ndcCommProtocol: "WSS"
   clusterName: "dpdui-eks-uswest2-dev"
@@ -42,6 +42,6 @@ webhook:
           - name: CAV_APP_AGENT_NDCHOST
             value: "64.71.137.183"
           - name: CAV_APP_AGENT_NDCPORT
-            value: "4472"
+            value: "443"
           - name: CAV_APP_AGENT_NDC_COMM_PROTOCOL
             value: "WSS"
