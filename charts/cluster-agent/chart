@@ -1,0 +1,103 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+  name: cluster-agent
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "cluster-agent.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicas }}
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: cluster-agent
+  template:
+    metadata:
+      labels:
+        app: cluster-agent
+      {{- with .Values.podFinalizers }}
+      finalizers:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+      serviceAccountName: cluster-agent-sa
+      containers:
+        - name: cluster-agent
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: VPA_NAMESPACE
+              value: {{ .Values.vpaNamespace | quote }}
+            - name: ZAP_NAMESPACE
+              value: {{ .Values.zapNamespace | quote }}
+            - name: KYVERNO_NAMESPACE
+              value: {{ .Values.kyverno.namespace | quote }}
+            - name: KYVERNO_POLICY_ENABLED
+              value: {{ .Values.kyverno.policyEnabled | quote }}
+            - name: KYVERNO_IMAGE_REFERENCE
+              value: {{ .Values.kyverno.imageReference | quote }}
+            - name: KYVERNO_VALIDATION_FAILURE_ACTION
+              value: {{ .Values.kyverno.validationFailureAction | quote }}
+            - name: KYVERNO_REGISTRY_SECRET_NAME
+              value: {{ .Values.kyverno.registrySecretName | quote }}
+            - name: KYVERNO_REGISTRY_SERVER
+              value: {{ .Values.kyverno.registryServer | quote }}
+            - name: KYVERNO_REGISTRY_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "cluster-agent.secretName" . }}
+                  key: registry-username
+            - name: KYVERNO_REGISTRY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "cluster-agent.secretName" . }}
+                  key: registry-password
+            - name: KYVERNO_COSIGN_SECRET_NAME
+              value: {{ .Values.kyverno.cosignSecretName | quote }}
+            - name: KYVERNO_COSIGN_PUBLIC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "cluster-agent.secretName" . }}
+                  key: cosign.pub
+            - name: FLAGGER_NAMESPACE
+              value: {{ .Values.flaggerNamespace | quote }}
+            - name: KUBEOPT_URL
+              value: {{ .Values.kubeoptUrl | quote }}
+            - name: DATASOURCE_NAME
+              value: {{ .Values.datasourceName | quote }}
+            - name: CLUSTER_NAME
+              value: {{ .Values.clusterName | quote }}
+            - name: FLUX_ENABLED
+              value: {{ .Values.flux.enabled | quote }}
+            - name: FLUX_GIT_URL
+              value: {{ .Values.flux.gitUrl | quote }}
+            - name: FLUX_GIT_BRANCH
+              value: {{ .Values.flux.gitBranch | quote }}
+            - name: FLUX_GIT_PATH
+              value: {{ .Values.flux.gitPath | quote }}
+            - name: FLUX_VERSION
+              value: {{ .Values.flux.version | quote }}
+            - name: FLUX_REGISTRY
+              value: {{ .Values.flux.registry | quote }}
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            {{- with .Values.extraEnv }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          resources:
+            requests:
+              cpu: {{ .Values.resources.requests.cpu | quote }}
+              memory: {{ .Values.resources.requests.memory | quote }}
+            limits:
+              cpu: {{ .Values.resources.limits.cpu | quote }}
+              memory: {{ .Values.resources.limits.memory | quote }}
