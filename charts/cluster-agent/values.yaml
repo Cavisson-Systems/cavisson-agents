@@ -1,0 +1,65 @@
+enabled: true
+
+image:
+  repository: cavissonsystem/cluster-agent
+  tag: DS5
+  pullPolicy: Always
+
+replicas: 1
+terminationGracePeriodSeconds: 200
+
+# Finalizer set on the pod template (kept as in the original manifest)
+podFinalizers:
+  - agent.cavisson.com/cleanup
+
+resources:
+  requests:
+    cpu: "50m"
+    memory: "64Mi"
+  limits:
+    cpu: "200m"
+    memory: "128Mi"
+
+rbac:
+  # Binds the agent ServiceAccount to the built-in cluster-admin ClusterRole.
+  # Required only when the agent installs Flux (flux.enabled=true).
+  clusterAdminBinding: true
+
+# Secret with registry credentials and the cosign public key used by Kyverno policies
+credentials:
+  # Use a pre-created Secret instead of the chart-managed one.
+  # It must contain keys: registry-username, registry-password, cosign.pub
+  existingSecret: ""
+  name: kyverno-agent-credentials
+  registryUsername: ""
+  registryPassword: ""
+  cosignPublicKey: ""
+
+# KubeOpt backend (prefer https)
+kubeoptUrl: "http://demoai.cav-test.com:8282"
+datasourceName: "BoutiqueAzureCreds"
+clusterName: "cavission-test"
+
+# Namespaces of the components the agent manages
+vpaNamespace: "cavisson-vpa"
+zapNamespace: "security-system"
+flaggerNamespace: "flagger-system"
+
+kyverno:
+  namespace: "kyverno"
+  policyEnabled: true
+  imageReference: "local-build.cav-test.com/boutique/frontend:*"
+  validationFailureAction: "Enforce"   # Enforce | Audit
+  registrySecretName: "registry-secret"
+  registryServer: "local-build.cav-test.com"
+  cosignSecretName: "cosign-pub-key"
+
+flux:
+  enabled: true
+  gitUrl: "https://github.com/dileep165794/flux-cd"
+  gitBranch: "main"
+  gitPath: "./clusters/azure-vm/flux-system"
+  version: "v2.8.6"
+  registry: "ghcr.io/fluxcd"
+
+extraEnv: []
