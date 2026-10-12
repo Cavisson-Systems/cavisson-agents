@@ -2,17 +2,13 @@
 kind: ServiceAccount
 apiVersion: v1
 metadata:
-  annotations:
-    argocd.argoproj.io/sync-wave: "-1"
   name: cmon-service-account
-  namespace: {{ .Values.global.namespace }}
+  namespace: {{ .Release.Namespace }}
 ---
 #Cmon Role
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  annotations:
-    argocd.argoproj.io/sync-wave: "-1"
   name: cmon-role
 rules:
 - apiGroups:
@@ -106,8 +102,6 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  annotations:
-    argocd.argoproj.io/sync-wave: "-1"
   name: cmon-clusterrolebinding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -116,16 +110,14 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: cmon-service-account
-  namespace: {{ .Values.global.namespace }}
+  namespace: {{ .Release.Namespace }}
 ---
 #DaemonSet
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  annotations:
-    argocd.argoproj.io/sync-wave: "-1"
   name: cmon
-  namespace: {{ .Values.global.namespace }}
+  namespace: {{ .Release.Namespace }}
   labels:
     name: cmon
     app: cmon
@@ -186,9 +178,11 @@ spec:
           - name: nf-volume
             mountPath: /home/cavisson/monitors/sys/nf.env
             subPath: nf.env
-        #  - name: tls-volume
-         #   mountPath: /home/cavisson/monitors/certs/
+          {{- if (index .Values "tls-enabled") }}
+          - name: tls-volume
+            mountPath: /home/cavisson/monitors/certs/
             readOnly: true
+          {{- end }}
       volumes:
       - name: varlogs
         hostPath:
@@ -213,6 +207,8 @@ spec:
         configMap:
           name: cmon-config
           defaultMode: 440
-      #- name: tls-volume
-      #  secret:
-      #   secretName: {{ .Values.tlsSecretName }}
+      {{- if (index .Values "tls-enabled") }}
+      - name: tls-volume
+        secret:
+         secretName: {{ .Values.tlsSecretName }}
+      {{- end }}
