@@ -34,7 +34,7 @@ NDController:
   proxymode: 1
 
 instrumentationTemplates:
-   - name: nodejs-default
+  - name: nodejs-default
     injectionRules:
       technology: nodejs
       image: cavissonsystem/nodejs-agent:4.15.0.B132  # TODO: replace with cavissonsystem nodejs agent image
