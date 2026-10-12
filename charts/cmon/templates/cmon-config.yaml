@@ -1,27 +1,24 @@
-# Namespace
-kind: Namespace
-apiVersion: v1
-metadata:
-  annotations:
-    argocd.argoproj.io/sync-wave: "-1"
-  name: {{ .Values.global.namespace }}
----
 # ConfigMap for Cmon Agent Configuration
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  annotations:
-    argocd.argoproj.io/sync-wave: "-1"
   name: cmon-config
-  namespace: {{ .Values.global.namespace }}
+  namespace: {{ .Release.Namespace }}
 data:
   cmon.env: |
     CONTROLLER={{ .Values.controller }}
-    TIER={{ .Values.tier }}
+    TIER={{ .Values.clusterName }}
     NDC_COMM_PROTOCOL={{ .Values.ndcCommProtocol }}
     CAV_CLUSTER_NAME={{ .Values.clusterName }}
     CMON_OPTS="{{ .Values.jvmOpts }}"
     CAV_MON_AGENT_OPTS="{{ .Values.monAgentOpts }}"
+    {{- if (index .Values "tls-enabled") }}
+    VERIFY_SERVER_CERT={{ .Values.verifyServerCert }}
+    VERIFY_HOST_NAME={{ .Values.verifyHostName }}
+    CLIENT_KEY={{ .Values.clientKey }}
+    CLIENT_CERT={{ .Values.clientCert }}
+    SERVER_CA_CERT={{ .Values.serverCaCert }}
+    {{- end }}
   nf.env: |
     CAV_LOG_STORAGE_ENV={{ .Values.nf.logStorageEnv }}
     OUTPUT_HOST1={{ .Values.nf.outputHost }}
