@@ -59,7 +59,7 @@ instrumentationRules:
       # - com.cavisson/inject-nodejs: "true"
       podNameRegex: ^(video|directv|dtv|sst|digital|fr)
     injectionRules:
-      template: nodejs-default
+      template: DirecTV_NodeJS
       containerMatch:
         excludeContainerNames:
           - web
