@@ -1,0 +1,15 @@
+apiVersion: v2
+name: cluster-agent
+description: A Helm chart for deploying the Cavisson cluster-agent (Kyverno, Flagger, Flux, VPA and Karpenter integration for KubeOpt)
+type: application
+version: 1.0.0
+appVersion: "DS5"
+keywords:
+  - cavisson
+  - cluster-agent
+  - kubeopt
+  - agent
+  - kubernetes
+maintainers:
+  - name: Cavisson Systems
+    email: support@cavisson.com
