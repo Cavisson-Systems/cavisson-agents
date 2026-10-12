@@ -62,4 +62,5 @@ instrumentationRules:
       template: nodejs-default
       containerMatch:
         excludeContainerNames:
-          - istio-proxy
+          - web
+        
