@@ -31,7 +31,7 @@ webhook:
     pullPolicy: Always
 
   instrumentationTemplates:
-    - name: nodejs-default
+    - name: DirecTV_NodeJS
       injectionRules:
         technology: nodejs
         image: cavissonsystem/node.js-agent:4.16.0.B67  # TODO: replace with cavissonsystem nodejs agent image
